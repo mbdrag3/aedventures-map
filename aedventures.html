@@ -1,0 +1,1543 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>AEDventures</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+<link href="https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.js"></script>
+<style>
+body { margin: 0; padding: 0; }
+#map { position: absolute; top: 0; bottom: 0; width: 100%; height: 100vh; }
+</style>
+</head>
+<body>
+<div id="map"></div>
+<script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoibWRyYWciLCJhIjoiY20xdGJ4bzd4MDByYTJrcTNhYWtqczZlciJ9.qDtT1wRwqLCvP9ep-JNUaQ';
+
+    const map = new mapboxgl.Map({
+        container: 'map', // container ID
+        style: 'mapbox://styles/mapbox/outdoors-v11', // Map style
+        center: [-82.9962, 40.3675], // Center (starting position)
+        zoom: 8.5, // Initial zoom level (adjusted to fit Ohio bounds)
+        minZoom: 8.5, // Set min zoom level to prevent zooming out
+        maxZoom: 9.5 // Set max zoom level to prevent zooming in too much
+    });
+
+    // Define the exact bounds you want to lock
+    const locations = [
+    {
+    name: 'Fairborn City Schools',
+    address: '306 East Whittier Avenue, Fairborn, Ohio 45324, United States',
+    coordinates: [ -84.016178, 39.828172 ],
+    quantity: 20,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Jackson Local School District',
+    address: '7984 Fulton Road Northwest, Massillon, Ohio 44646, United States',
+    coordinates: [ -81.49806, 40.860938 ],
+    quantity: 4,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Carrollton Exempted Village Schools',
+    address: '205 Scio Road Southwest, Carrollton, Ohio 44615, United States',
+    coordinates: [ -81.10028, 40.55933 ],
+    quantity: 12,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Crestview Schools',
+    address: '1575 State Route 96, Ashland, Ohio 44805, United States',
+    coordinates: [ -82.41092, 40.8882 ],
+    quantity: 2,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Beavercreek City Schools',
+    address: '3560 Kemp Road, Beavercreek, Ohio 45431, United States',
+    coordinates: [ -84.064012, 39.757348 ],
+    quantity: 4,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'East Palestine School District',
+    address: '200 West North Avenue, East Palestine, Ohio 44413, United States',
+    coordinates: [ -80.54366, 40.838811 ],
+    quantity: 7,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'St. Hilary School',
+    address: '645 Moorfield Road, Fairlawn, Ohio 44333, United States',
+    coordinates: [ -81.603503, 41.123098 ],
+    quantity: 3,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Oregon School District',
+    address: '5721 Seaman Road, Oregon, Ohio 43616, United States',
+    coordinates: [ -83.410811, 41.653017 ],
+    quantity: 2,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'St Helen Catholic Church & School',
+    address: '12060 Kinsman Road, Newbury, Ohio 44065, United States',
+    coordinates: [ -81.206849, 41.466657 ],
+    quantity: 1,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Greenon Local Schools',
+    address: '120 South Xenia Drive, Enon, Ohio 45323, United States',
+    coordinates: [ -83.937375, 39.879893 ],
+    quantity: 2,
+    item: 'PowerheartÂ® G5 AED Fully Auto w/ICPR, Dual Language'
+    },
+    {
+    name: 'Pike County School for Child Advancement',
+    address: '301 Clough Street, Waverly, Ohio 45690, United States',
+    coordinates: [ -82.981918, 39.13094 ],
+    quantity: 1,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Brunswick City Schools',
+    address: '3643 Center Road, Brunswick, Ohio 44212, United States',
+    coordinates: [ -81.817822, 41.241847 ],
+    quantity: 7,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'East Palestine School Distric',
+    address: '195 West Grant Street, East Palestine, Ohio 44413, United States',
+    coordinates: [ -80.54291, 40.838854 ],
+    quantity: 3,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Magnificat High School',
+    address: '20770 Hilliard Boulevard, Rocky River, Ohio 44116, United States',
+    coordinates: [ -81.850487, 41.469072 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Crestwood Local School District',
+    address: '10880 John Edward Drive, Mantua, Ohio 44255, United States',
+    coordinates: [ -81.233883, 41.288069 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Twinsburg City Schools',
+    address: '11136 Ravenna Road, Twinsburg, Ohio 44087, United States',
+    coordinates: [ -81.476126, 41.338533 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Lake Local Schools',
+    address: '436 King Church Ave SW, Uniontown, Ohio 44685, United States',
+    coordinates: [ -81.4213, 40.95886 ],
+    quantity: 2,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'ABM Education/Granville Exempted Village Schools',
+    address: '310 North Granger Street, Granville, Ohio 43023, United States',
+    coordinates: [ -82.513254, 40.070422 ],
+    quantity: 16,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Carlisle Local School District',
+    address: '270 Jamaica Road, Carlisle, Ohio 45005, United States',
+    coordinates: [ -84.322253, 39.586136 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Perry Local Schools District',
+    address: 'Learning Lane, Perry, Ohio 44081, United States',
+    coordinates: [ -81.136307, 41.771398 ],
+    quantity: 2,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Marion City School District',
+    address: '100 Executive Drive, Marion, Ohio 43302, United States',
+    coordinates: [ -83.124971, 40.571503 ],
+    quantity: 11,
+    item: 'Zoll Fully Automatic AED Plus with Pass Cover and Medical Prescription'
+    },
+    {
+    name: 'South-Western City School District',
+    address: '3805 Marlane Drive, Grove City, Ohio 43123, United States',
+    coordinates: [ -83.047648, 39.884275 ],
+    quantity: 7,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Deer Park City Schools',
+    address: '8688 Donna Lane, Cincinnati, Ohio 45236, United States',
+    coordinates: [ -84.397432, 39.216422 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Tuslaw Local School District',
+    address: '1835 Manchester Avenue Northwest, Massillon, Ohio 44647, United States',
+    coordinates: [ -81.602098, 40.811107 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Bryan City Schools 6-12 Building',
+    address: '1000 West Fountain Grove Drive, Bryan, Ohio 43506, United States',
+    coordinates: [ -84.568159, 41.457157 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Shadyside Local Schools',
+    address: '3890 Lincoln Avenue, Shadyside, Ohio 43947, United States',
+    coordinates: [ -80.746142, 39.971306 ],
+    quantity: 6,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Tipp City Schools',
+    address: '90 South Tippecanoe Drive, Tipp City, Ohio 45371, United States',
+    coordinates: [ -84.184186, 39.958489 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Chagrin Falls Exempted Village Schools',
+    address: '400 East Washington Street, Chagrin Falls, Ohio 44022, United States',
+    coordinates: [ -81.380671, 41.426875 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'St. Joseph School',
+    address: '2617 Waterloo Road, Mogadore, Ohio 44260, United States',
+    coordinates: [ -81.298108, 41.02898 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'St. Henry Local Schools',
+    address: '391 East Columbus Street, Saint Henry, Ohio 45883, United States',
+    coordinates: [ -84.635302, 40.416153 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Gahanna-Jefferson Schools Special Education Services',
+    address: '160 Hamilton Road, Columbus, Ohio 43230, United States',
+    coordinates: [ -82.86596, 40.014884 ],
+    quantity: 4,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Kettering City Schools',
+    address: '580 Lincoln Park Boulevard, Kettering, Ohio 45429, United States',
+    coordinates: [ -84.159203, 39.696253 ],
+    quantity: 16,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'The Ohio State University',
+    address: '337 Annie & John Glenn Avenue, Columbus, Ohio 43210, United States',
+    coordinates: [ -83.018255, 39.999559 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Lake Center Christian School',
+    address: '12893 Kaufman Avenue Northwest, Hartville, Ohio 44632, United States',
+    coordinates: [ -81.368407, 40.976746 ],
+    quantity: 1,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Hudson City School District',
+    address: '76 North Hayden Parkway, Hudson, Ohio 44236, United States',
+    coordinates: [ -81.426779, 41.24315 ],
+    quantity: 2,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Crestview Schools',
+    address: '1575 State Route 96, Ashland, Ohio 44805, United States',
+    coordinates: [ -82.41092, 40.8882 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Greene County Educational Service Center',
+    address: '360 East Enon Road, Yellow Springs, Ohio 45387, United States',
+    coordinates: [ -83.909311, 39.800408 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Newcomerstown Exempted Village District High School',
+    address: '1 Woody Hayes Drive, Newcomerstown, Ohio 43832, United States',
+    coordinates: [ -81.611658, 40.265788 ],
+    quantity: 4,
+    item: 'HeartSine SAM 360P AED (Fully Automatic)-360-STR-US-10'
+    },
+    {
+    name: 'Jackson Local School District',
+    address: '7984 Fulton Road Northwest, Massillon, Ohio 44646, United States',
+    coordinates: [ -81.49806, 40.860938 ],
+    quantity: 2,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'East Holmes Local Schools',
+    address: '6108 County Road 77, Millersburg, Ohio 44654, United States',
+    coordinates: [ -81.78077, 40.576636 ],
+    quantity: 2,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Anna Board of Education',
+    address: '1 Mcrill Way, Anna, Ohio 45302, United States',
+    coordinates: [ -84.176388, 40.396827 ],
+    quantity: 2,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Manchester Local Schools',
+    address: '6075 Manchester Road, Akron, Ohio 44319, United States',
+    coordinates: [ -81.568598, 40.939779 ],
+    quantity: 10,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Fairborn Digital Academy',
+    address: '57 East Dayton Yellow Springs Road, Fairborn, Ohio 45324, United States',
+    coordinates: [ -84.022655, 39.792702 ],
+    quantity: 1,
+    item: 'HeartSine SAM 360P AED (Fully Automatic)-360-STR-US-10'
+    },
+    {
+    name: 'Marion City School District',
+    address: '100 Executive Drive, Marion, Ohio 43302, United States',
+    coordinates: [ -83.124971, 40.571503 ],
+    quantity: 4,
+    item: 'Zoll Fully Automatic AED Plus with Pass Cover and Medical Prescription'
+    },
+    {
+    name: 'Highland School District',
+    address: '3880 Ridge Road, Medina, Ohio 44256, United States',
+    coordinates: [ -81.743176, 41.170382 ],
+    quantity: 2,
+    item: 'LPCR2 Fully-automatic, WIFI, English, Bag'
+    },
+    {
+    name: 'Riverside Local Schools',
+    address: '2096 County Road 24 South, De Graff, Ohio 43318, United States',
+    coordinates: [ -83.922985, 40.315568 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English, Bag'
+    },
+    {
+    name: 'Northmont City Schools',
+    address: '4001 Old Salem Road, Englewood, Ohio 45322, United States',
+    coordinates: [ -84.292631, 39.847964 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English, Bag'
+    },
+    {
+    name: 'Upper Arlington City School District',
+    address: '1950 North Mallway Drive, Columbus, Ohio 43221, United States',
+    coordinates: [ -83.061298, 39.999665 ],
+    quantity: 6,
+    item: 'LPCR2 Fully-automatic, WIFI, English, Bag'
+    },
+    {
+    name: 'Village Schools',
+    address: '342 East Washington Street, Chagrin Falls, Ohio 44022, United States',
+    coordinates: [ -81.380663, 41.426917 ],
+    quantity: 7,
+    item: 'LPCR2 Fully-automatic, WIFI, English, Bag'
+    },
+    {
+    name: 'Exempted Village School',
+    address: '210 East Main Street, Loudonville, Ohio 44842, United States',
+    coordinates: [ -82.231458, 40.635161 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English, Bag'
+    },
+    {
+    name: 'Exempted Village School',
+    address: '210 East Main Street, Loudonville, Ohio 44842, United States',
+    coordinates: [ -82.231458, 40.635161 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English, Bag'
+    },
+    {
+    name: 'Brunswick City Schools',
+    address: '3581 Center Road, Brunswick, Ohio 44212, United States',
+    coordinates: [ -81.815956, 41.241627 ],
+    quantity: 7,
+    item: 'LPCR2 Fully-automatic, WIFI, English, Bag'
+    },
+    {
+    name: 'Village Schools',
+    address: '342 East Washington Street, Chagrin Falls, Ohio 44022, United States',
+    coordinates: [ -81.380663, 41.426917 ],
+    quantity: 4,
+    item: 'LPCR2 Fully-automatic, WIFI, English, Bag'
+    },
+    {
+    name: 'Warrensville Heights City School District',
+    address: '4270 Northfield Road, Cleveland, Ohio 44128, United States',
+    coordinates: [ -81.53078, 41.443884 ],
+    quantity: 2,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Austintown Fitch High School',
+    address: '4560 Falcon Drive, Austintown, Ohio 44515, United States',
+    coordinates: [ -80.738798, 41.091847 ],
+    quantity: 12,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Austintown Fitch High School',
+    address: '4560 Falcon Drive, Austintown, Ohio 44515, United States',
+    coordinates: [ -80.738798, 41.091847 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Northwestern Elementary School',
+    address: '7334 North Elyria Road, West Salem, Ohio 44287, United States',
+    coordinates: [ -82.110081, 40.889158 ],
+    quantity: 3,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Upper Arlington City School District',
+    address: '1619 Zollinger Road, Columbus, Ohio 43221, United States',
+    coordinates: [ -83.055198, 40.018118 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Educational Service Center of Northeast Ohio',
+    address: '6393 Oak Tree Boulevard, Independence, Ohio 44131, United States',
+    coordinates: [ -81.659456, 41.391826 ],
+    quantity: 2,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'St. John Central School',
+    address: '17654 Lancaster Street, Marietta, Ohio 45750, United States',
+    coordinates: [ -81.547283, 39.465824 ],
+    quantity: 1,
+    item: 'HeartSine SAM 360P AED (Fully Automatic)-360-STR-US-10'
+    },
+    {
+    name: 'Athens City Schools',
+    address: 'Chauncey, Ohio 45719, United States',
+    coordinates: [ -82.128849, 39.400248 ],
+    quantity: 12,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Hudson City School District',
+    address: '76 North Hayden Parkway, Hudson, Ohio 44236, United States',
+    coordinates: [ -81.426779, 41.24315 ],
+    quantity: 8,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'The Ohio State University McCorkle AquaticPavillion C179',
+    address: '2650 Kenny Road, Columbus, Ohio 43210, United States',
+    coordinates: [ -83.036097, 40.014048 ],
+    quantity: 15,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Gahanna-Jefferson Schools Special Education Services',
+    address: '160 Hamilton Road, Columbus, Ohio 43230, United States',
+    coordinates: [ -82.86596, 40.014884 ],
+    quantity: 1,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Niles Intermediate School',
+    address: '120 East Margaret Avenue Southeast, Niles, Ohio 44446, United States',
+    coordinates: [ -80.764547, 41.193675 ],
+    quantity: 6,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Miami East Local Schools',
+    address: '3825 Ohio Highway 589, Casstown, Ohio 45312, United States',
+    coordinates: [ -84.115469, 40.085969 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Lake Local Schools',
+    address: '436 King Church Ave SW, Uniontown, Ohio 44685, United States',
+    coordinates: [ -81.4213, 40.95886 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Westlake City Schools',
+    address: '24365 Hilliard Boulevard, Westlake, Ohio 44145, United States',
+    coordinates: [ -81.889237, 41.461829 ],
+    quantity: 8,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Canal Winchester Local Schools',
+    address: '100 Washington Street, Canal Winchester, Ohio 43110, United States',
+    coordinates: [ -82.809604, 39.840697 ],
+    quantity: 8,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Graham Local Schools',
+    address: '7790 US Route 36, Saint Paris, Ohio 43072, United States',
+    coordinates: [ -83.909196, 40.122588 ],
+    quantity: 5,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Kettering City Schools',
+    address: '580 Lincoln Park Boulevard, Kettering, Ohio 45429, United States',
+    coordinates: [ -84.159203, 39.696253 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Newton Local Schools',
+    address: '201 Long Street, Pleasant Hill, Ohio 45359, United States',
+    coordinates: [ -84.341679, 40.054662 ],
+    quantity: 4,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Wilmington City Schools',
+    address: '341 South Nelson Avenue, Wilmington, Ohio 45177, United States',
+    coordinates: [ -83.852338, 39.440614 ],
+    quantity: 12,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Carlisle Local School District',
+    address: '270 Jamaica Road, Carlisle, Ohio 45005, United States',
+    coordinates: [ -84.322253, 39.586136 ],
+    quantity: 5,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Spencerville Local Schools',
+    address: '2500 Wisher Drive, Spencerville, Ohio 45887, United States',
+    coordinates: [ -84.344742, 40.701935 ],
+    quantity: 4,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'South-Western City School  District',
+    address: '3805 Marlane Drive, Grove City, Ohio 43123, United States',
+    coordinates: [ -83.047648, 39.884275 ],
+    quantity: 4,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Deer Park City Schools Amity Elementar',
+    address: '4320 East Galbraith Road, Cincinnati, Ohio 45236, United States',
+    coordinates: [ -84.393143, 39.208396 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'ABM Education/Granville Exempted Village Schools',
+    address: '310 North Granger Street, Granville, Ohio 43023, United States',
+    coordinates: [ -82.513254, 40.070422 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Riverside Local Schools',
+    address: '585 Riverside Drive, Painesville, Ohio 44077, United States',
+    coordinates: [ -81.218925, 41.713079 ],
+    quantity: 14,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Conotton Valley Union Local Schools',
+    address: '7205 Cumberland Road Southwest, Bowerston, Ohio 44695, United States',
+    coordinates: [ -81.21851, 40.46203 ],
+    quantity: 4,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Olentangy Berlin High School',
+    address: '3140 Berlin Station Road, Delaware, Ohio 43015, United States',
+    coordinates: [ -83.002952, 40.255592 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Franklin Elementary School',
+    address: '310 East 4th Street, Delphos, Ohio 45833, United States',
+    coordinates: [ -84.336635, 40.846516 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Black River Local Schools',
+    address: '257A County Road 40, Sullivan, Ohio 44880, United States',
+    coordinates: [ -82.1752, 41.05818 ],
+    quantity: 5,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Cedar Cliff Schools',
+    address: '194 Walnut Street, Cedarville, Ohio 45314, United States',
+    coordinates: [ -83.806159, 39.74729 ],
+    quantity: 2,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Cedar Cliff Schools',
+    address: '194 Walnut Street, Cedarville, Ohio 45314, United States',
+    coordinates: [ -83.806159, 39.74729 ],
+    quantity: 1,
+    item: 'PowerheartÂ® G5 AED Fully Auto w/ICPR, Dual Language'
+    },
+    {
+    name: 'East Muskingum Local Schools',
+    address: '13505 John Glenn School Road, New Concord, Ohio 43762, United States',
+    coordinates: [ -81.73519, 40.005737 ],
+    quantity: 6,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Licking Heights Local School',
+    address: '6565 Summit Road Southwest, Pataskala, Ohio 43062, United States',
+    coordinates: [ -82.750741, 39.994772 ],
+    quantity: 5,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Ross Local Schools',
+    address: '3371 Hamilton Cleves Road, Hamilton, Ohio 45013, United States',
+    coordinates: [ -84.64012, 39.32067 ],
+    quantity: 6,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Avon Lake City Schools',
+    address: '175 Avon Belden Road, Avon Lake, Ohio 44012, United States',
+    coordinates: [ -82.017263, 41.508665 ],
+    quantity: 5,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Lake Local Schools',
+    address: '436 King Church Ave SW, Uniontown, Ohio 44685, United States',
+    coordinates: [ -81.4213, 40.95886 ],
+    quantity: 2,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Windham Exempted Village Schools',
+    address: '9530 Bauer Avenue, Windham, Ohio 44288, United States',
+    coordinates: [ -81.047237, 41.232932 ],
+    quantity: 4,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Westlake City Schools',
+    address: '24365 Hilliard Boulevard, Westlake, Ohio 44145, United States',
+    coordinates: [ -81.889237, 41.461829 ],
+    quantity: 2,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Leipsic Local School District',
+    address: '232 Oak Street, Leipsic, Ohio 45856, United States',
+    coordinates: [ -83.990273, 41.099364 ],
+    quantity: 2,
+    item: 'PowerheartÂ® G5 AED Fully Auto w/ICPR, Dual Language'
+    },
+    {
+    name: 'Middleburg Early Education',
+    address: '7171 Pearl Road, Middleburg Heights, Ohio 44130, United States',
+    coordinates: [ -81.8005, 41.370522 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Lake Center Christian School',
+    address: '12893 Kaufman Avenue Northwest, Hartville, Ohio 44632, United States',
+    coordinates: [ -81.368407, 40.976746 ],
+    quantity: 4,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Canal Winchester Local Schools',
+    address: '100 Washington Street, Canal Winchester, Ohio 43110, United States',
+    coordinates: [ -82.809604, 39.840697 ],
+    quantity: 2,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'St Paschal Parish and School',
+    address: '5384 Wilson Mills Road, Highland Heights, Ohio 44143, United States',
+    coordinates: [ -81.485258, 41.538118 ],
+    quantity: 6,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Buckeye Local School District',
+    address: '2428 Blake Road, Ashtabula, Ohio 44004, United States',
+    coordinates: [ -80.730976, 41.885878 ],
+    quantity: 8,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Nordonia Hills City School District',
+    address: '9370 Olde Eight Road, Northfield, Ohio 44067, United States',
+    coordinates: [ -81.540315, 41.315199 ],
+    quantity: 16,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Spencerville Local Schools',
+    address: '2500 Wisher Drive, Spencerville, Ohio 45887, United States',
+    coordinates: [ -84.344742, 40.701935 ],
+    quantity: 7,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Jonathan Alder Local Schools',
+    address: '9200 London – Delaware Road, Plain City, Ohio 43064, United States',
+    coordinates: [ -83.287998, 40.077794 ],
+    quantity: 2,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Grandview Heights City Schools',
+    address: '1587 West 3rd Avenue, Columbus, Ohio 43212, United States',
+    coordinates: [ -83.048365, 39.984984 ],
+    quantity: 4,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Winton Woods North Campus',
+    address: '1231 West Kemper Road, Cincinnati, Ohio 45240, United States',
+    coordinates: [ -84.526455, 39.286213 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Lake Center Christian School',
+    address: '12893 Kaufman Avenue Northwest, Hartville, Ohio 44632, United States',
+    coordinates: [ -81.368407, 40.976746 ],
+    quantity: 1,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Lake Center Christian School',
+    address: '12893 Kaufman Avenue Northwest, Hartville, Ohio 44632, United States',
+    coordinates: [ -81.368407, 40.976746 ],
+    quantity: 4,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Margaretta School District',
+    address: '305 South Washington Street, Castalia, Ohio 44824, United States',
+    coordinates: [ -82.808152, 41.396982 ],
+    quantity: 2,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Wyoming City Schools',
+    address: '106 Pendery Avenue, Wyoming, Ohio 45215, United States',
+    coordinates: [ -84.470362, 39.233135 ],
+    quantity: 13,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Austintown Schools',
+    address: '700 South Raccoon Road, Austintown, Ohio 44515, United States',
+    coordinates: [ -80.733651, 41.091155 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Southeast Local School District',
+    address: '8301 Tallmadge Road, Ravenna, Ohio 44266, United States',
+    coordinates: [ -81.092117, 41.101413 ],
+    quantity: 3,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Granville Christian Academy',
+    address: '1820 Newark Granville Road, Granville, Ohio 43023, United States',
+    coordinates: [ -82.488715, 40.060578 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'St Boniface Catholic School',
+    address: '215 West Oak Street, Oak Harbor, Ohio 43449, United States',
+    coordinates: [ -83.148254, 41.510739 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Avon Lake City Schools',
+    address: '175 Avon Belden Road, Avon Lake, Ohio 44012, United States',
+    coordinates: [ -82.017263, 41.508665 ],
+    quantity: 4,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Deer Park City Schools',
+    address: '8688 Donna Lane, Cincinnati, Ohio 45236, United States',
+    coordinates: [ -84.397432, 39.216422 ],
+    quantity: 8,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Niles City Schools',
+    address: '309 North Rhodes Avenue, Niles, Ohio 44446, United States',
+    coordinates: [ -80.734986, 41.186137 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Delphos City schools',
+    address: '901 Wildcat Ln, Delphos, Ohio 45833, United States',
+    coordinates: [ -84.34924, 40.82952 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'West Geauga Local Schools',
+    address: '8615 Cedar Road, Chesterland, Ohio 44026, United States',
+    coordinates: [ -81.339683, 41.507253 ],
+    quantity: 5,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Perry Local Schools',
+    address: '4201 13th Street Southwest, Canton, Ohio 44646, United States',
+    coordinates: [ -81.454791, 40.788065 ],
+    quantity: 16,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Riverside Local Schools',
+    address: '2096 County Road 24 South, De Graff, Ohio 43318, United States',
+    coordinates: [ -83.922985, 40.315568 ],
+    quantity: 2,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Anna Local Schools',
+    address: '204 North 2nd Street, Anna, Ohio 45302, United States',
+    coordinates: [ -84.177186, 40.398298 ],
+    quantity: 3,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Upper Arlington High School',
+    address: '1625 Zollinger Road, Columbus, Ohio 43221, United States',
+    coordinates: [ -83.05573, 40.01841 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Twinsburg City Schools',
+    address: '11136 Ravenna Road, Twinsburg, Ohio 44087, United States',
+    coordinates: [ -81.476126, 41.338533 ],
+    quantity: 5,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Northmont City Schools',
+    address: '4001 Old Salem Road, Englewood, Ohio 45322, United States',
+    coordinates: [ -84.292631, 39.847964 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Winton Woods City Schools',
+    address: '8 Enfield Street, Cincinnati, Ohio 45218, United States',
+    coordinates: [ -84.520622, 39.267444 ],
+    quantity: 7,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Indian Hill Exempted Village School District',
+    address: '6865 Drake Road, Cincinnati, Ohio 45243, United States',
+    coordinates: [ -84.347429, 39.186589 ],
+    quantity: 5,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Tuslaw Local School District',
+    address: '1835 Manchester Avenue Northwest, Massillon, Ohio 44647, United States',
+    coordinates: [ -81.602098, 40.811107 ],
+    quantity: 5,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Wayne Local School District',
+    address: '659 Dayton Road, Waynesville, Ohio 45068, United States',
+    coordinates: [ -84.092197, 39.535658 ],
+    quantity: 2,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Saint Joseph Parish School',
+    address: '32929 Lake Road, Avon Lake, Ohio 44012, United States',
+    coordinates: [ -82.026519, 41.510342 ],
+    quantity: 3,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Jackson Local School District',
+    address: '7984 Fulton Road Northwest, Massillon, Ohio 44646, United States',
+    coordinates: [ -81.49806, 40.860938 ],
+    quantity: 4,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Mad River Local School District',
+    address: '801 Old Harshman Road, Dayton, Ohio 45431, United States',
+    coordinates: [ -84.12322, 39.77697 ],
+    quantity: 1,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Elida Local Schools',
+    address: '4380 Sunnydale Street, Elida, Ohio 45807, United States',
+    coordinates: [ -84.186965, 40.789249 ],
+    quantity: 1,
+    item: 'PowerheartÂ® G5 AED Fully Auto w/ICPR, Dual Language'
+    },
+    {
+    name: 'Krista Lands-Kate Bower Bethany School',
+    address: '555 Albion Avenue, Cincinnati, Ohio 45246, United States',
+    coordinates: [ -84.454741, 39.26455 ],
+    quantity: 4,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Willoughby Eastlake City Schools',
+    address: '34041 Stevens Boulevard, Eastlake, Ohio 44095, United States',
+    coordinates: [ -81.445547, 41.653025 ],
+    quantity: 1,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Mayfield City Schools',
+    address: '1101 S.O.M. Center Road, Cleveland, Ohio 44124, United States',
+    coordinates: [ -81.43807, 41.530605 ],
+    quantity: 1,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Olentangy Local Schools',
+    address: '7840 Graphics Way, Lewis Center, Ohio 43035, United States',
+    coordinates: [ -83.018866, 40.176416 ],
+    quantity: 3,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'South-Western City School District',
+    address: '3805 Marlane Drive, Grove City, Ohio 43123, United States',
+    coordinates: [ -83.047648, 39.884275 ],
+    quantity: 45,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Perry Local Schools',
+    address: '4201 13th Street Southwest, Canton, Ohio 44646, United States',
+    coordinates: [ -81.454791, 40.788065 ],
+    quantity: 2,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Willoughby South High School',
+    address: '4900 Shankland Road, Willoughby, Ohio 44094, United States',
+    coordinates: [ -81.422771, 41.625178 ],
+    quantity: 3,
+    item: 'HeartSine SAM 360P AED (Fully Automatic)-360-STR-US-10'
+    },
+    {
+    name: 'Botkins Local Schools',
+    address: '404 East State Street, Botkins, Ohio 45306, United States',
+    coordinates: [ -84.179426, 40.468923 ],
+    quantity: 2,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Magnificat High School',
+    address: '20770 Hilliard Boulevard, Rocky River, Ohio 44116, United States',
+    coordinates: [ -81.850487, 41.469072 ],
+    quantity: 4,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Catholic Central School',
+    address: '1200 East High Street, Springfield, Ohio 45505, United States',
+    coordinates: [ -83.791667, 39.921528 ],
+    quantity: 4,
+    item: 'Fully automatic ZOLL AED 3 - Color touchscreen LCD display, Real CPR HelpÂ®, CPR Uni-padz TM, WiFi enable A'
+    },
+    {
+    name: 'Catholic Central School',
+    address: '1200 East High Street, Springfield, Ohio 45505, United States',
+    coordinates: [ -83.791667, 39.921528 ],
+    quantity: 4,
+    item: 'Fully automatic ZOLL AED 3 - Color touchscreen LCD display, Real CPR HelpÂ®, CPR Uni-padz TM, WiFi enable A'
+    },
+    {
+    name: 'South-Western City School District',
+    address: '3805 Marlane Drive, Grove City, Ohio 43123, United States',
+    coordinates: [ -83.047648, 39.884275 ],
+    quantity: 1,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Ohio State University Extension',
+    address: '724 7th Street, Coshocton, Ohio 43812, United States',
+    coordinates: [ -81.858872, 40.266512 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Graham Local Schools',
+    address: '9915 US Route 36, Saint Paris, Ohio 43072, United States',
+    coordinates: [ -83.94811, 40.126258 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Spencerville Local Schools',
+    address: '2500 Wisher Drive, Spencerville, Ohio 45887, United States',
+    coordinates: [ -84.344742, 40.701935 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Upper Arlington Schools',
+    address: '3861 Reed Road, Columbus, Ohio 43220, United States',
+    coordinates: [ -83.067114, 40.035487 ],
+    quantity: 5,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Little Miami Local School District',
+    address: 'Kroger Maineville, St. Rt. 48, Maineville, Ohio 45039, United States',
+    coordinates: [ -84.219016, 39.351608 ],
+    quantity: 16,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Jonathan Alder Local Schools',
+    address: '9200 London – Delaware Road, Plain City, Ohio 43064, United States',
+    coordinates: [ -83.287998, 40.077794 ],
+    quantity: 2,
+    item: 'HeartSine SAM 360P AED (Fully Automatic)-360-STR-US-10'
+    },
+    {
+    name: 'Carlisle Local School District',
+    address: '724 Fairview Drive, Carlisle, Ohio 45005, United States',
+    coordinates: [ -84.32147, 39.58485 ],
+    quantity: 2,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Reynoldsburg City Schools',
+    address: '1555 Graham Road, Reynoldsburg, Ohio 43068, United States',
+    coordinates: [ -82.796865, 39.952745 ],
+    quantity: 2,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Buckeye Local School District',
+    address: '6899 Ohio Highway 150, Dillonvale, Ohio 43917, United States',
+    coordinates: [ -80.769689, 40.203209 ],
+    quantity: 4,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Central Catholic ELementary',
+    address: '600 North Tuscarawas Avenue, Dover, Ohio 44622, United States',
+    coordinates: [ -81.483029, 40.522514 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Tallmadge City Schools',
+    address: '486 East Avenue, Tallmadge, Ohio 44278, United States',
+    coordinates: [ -81.422496, 41.09964 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Magnificat High School',
+    address: '20770 Hilliard Boulevard, Rocky River, Ohio 44116, United States',
+    coordinates: [ -81.850487, 41.469072 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Reynoldsburg City Schools',
+    address: '7244 East Main Street, Reynoldsburg, Ohio 43068, United States',
+    coordinates: [ -82.804546, 39.95568 ],
+    quantity: 3,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Brunswick City Schools',
+    address: '3531 Center Road, Brunswick, Ohio 44212, United States',
+    coordinates: [ -81.812992, 41.238279 ],
+    quantity: 2,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Columbia Local Schools',
+    address: '25796 Royalton Road, Columbia Station, Ohio 44028, United States',
+    coordinates: [ -81.93092, 41.3132 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Minster Local Schools',
+    address: '50 East 7th Street, Minster, Ohio 45865, United States',
+    coordinates: [ -84.380299, 40.402319 ],
+    quantity: 5,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Strongsville City Schools',
+    address: '18199 Cook Avenue, Strongsville, Ohio 44136, United States',
+    coordinates: [ -81.828792, 41.307556 ],
+    quantity: 23,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Mad River Local School District',
+    address: '801 Old Harshman Road, Dayton, Ohio 45431, United States',
+    coordinates: [ -84.12322, 39.77697 ],
+    quantity: 10,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'West Geauga Local Schools',
+    address: '8615 Cedar Road, Chesterland, Ohio 44026, United States',
+    coordinates: [ -81.339683, 41.507253 ],
+    quantity: 2,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Miami View Elementary',
+    address: '230 Clifton Road, South Charleston, Ohio 45368, United States',
+    coordinates: [ -83.639954, 39.829192 ],
+    quantity: 2,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Mad River Local School District',
+    address: '801 Old Harshman Road, Dayton, Ohio 45431, United States',
+    coordinates: [ -84.12322, 39.77697 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Olentangy Local Schools',
+    address: '7840 Graphics Way, Lewis Center, Ohio 43035, United States',
+    coordinates: [ -83.018866, 40.176416 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Olentangy Local Schools',
+    address: '7840 Graphics Way, Lewis Center, Ohio 43035, United States',
+    coordinates: [ -83.018866, 40.176416 ],
+    quantity: 2,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'South-Western City School District',
+    address: '3805 Marlane Drive, Grove City, Ohio 43123, United States',
+    coordinates: [ -83.047648, 39.884275 ],
+    quantity: 32,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Educational Service Center of Northeast Ohio',
+    address: '6393 Oak Tree Boulevard, Independence, Ohio 44131, United States',
+    coordinates: [ -81.659456, 41.391826 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Carrollton Exempted Village Schools',
+    address: '205 Scio Road Southwest, Carrollton, Ohio 44615, United States',
+    coordinates: [ -81.10028, 40.55933 ],
+    quantity: 5,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Greater Ohio Virtual School',
+    address: '1879 Deerfield Road, Lebanon, Ohio 45036, United States',
+    coordinates: [ -84.211304, 39.40698 ],
+    quantity: 1,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Brooklyn City Schools',
+    address: '9200 Biddulph Road, Brooklyn, Ohio 44144, United States',
+    coordinates: [ -81.749315, 41.431083 ],
+    quantity: 7,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Brooklyn City Schools',
+    address: '9200 Biddulph Road, Brooklyn, Ohio 44144, United States',
+    coordinates: [ -81.749315, 41.431083 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Olentangy Local Schools',
+    address: '7840 Graphics Way, Lewis Center, Ohio 43035, United States',
+    coordinates: [ -83.018866, 40.176416 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Manchester Local Schools',
+    address: '6075 Manchester Road, Akron, Ohio 44319, United States',
+    coordinates: [ -81.568598, 40.939779 ],
+    quantity: 2,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Shanahan Middle School',
+    address: '814 Shanahan Road, Lewis Center, Ohio 43035, United States',
+    coordinates: [ -83.023171, 40.211535 ],
+    quantity: 2,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Southeastern Local Schools',
+    address: '2003 Lancaster Road, Chillicothe, Ohio 45601, United States',
+    coordinates: [ -82.871656, 39.281023 ],
+    quantity: 1,
+    item: 'HeartSine SAM 360P AED (Fully Automatic)-360-STR-US-10'
+    },
+    {
+    name: 'Avon Lake City Schools',
+    address: '175 Avon Belden Road, Avon Lake, Ohio 44012, United States',
+    coordinates: [ -82.017263, 41.508665 ],
+    quantity: 6,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Campbell City Schools',
+    address: '2002 Community Cir, Campbell, Ohio 44405, United States',
+    coordinates: [ -80.570945, 41.081727 ],
+    quantity: 1,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Vandalia Butler City Schools Butler High School',
+    address: '600 South Dixie Drive, Vandalia, Ohio 45377, United States',
+    coordinates: [ -84.196966, 39.885295 ],
+    quantity: 1,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Heath City Schools',
+    address: '107 Lancaster Drive, Heath, Ohio 43056, United States',
+    coordinates: [ -82.447783, 40.038736 ],
+    quantity: 3,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Riverside Local Schools',
+    address: '585 Riverside Drive, Painesville, Ohio 44077, United States',
+    coordinates: [ -81.218925, 41.713079 ],
+    quantity: 7,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Lake Local Schools',
+    address: '436 King Church Ave SW, Uniontown, Ohio 44685, United States',
+    coordinates: [ -81.4213, 40.95886 ],
+    quantity: 2,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Hardin-Houston Local School District',
+    address: '5300 Houston Road, Houston, Ohio 45333, United States',
+    coordinates: [ -84.33135, 40.24567 ],
+    quantity: 2,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Mayfield City Schools',
+    address: '1101 S.O.M. Center Road, Mayfield, Ohio 44124, United States',
+    coordinates: [ -81.43807, 41.530605 ],
+    quantity: 9,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Talawanda School District',
+    address: '909 South Main Street, Oxford, Ohio 45056, United States',
+    coordinates: [ -84.741897, 39.49979 ],
+    quantity: 5,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Wayne County Schools Career Center/ Central Receiving',
+    address: '518 West Prospect Street, Smithville, Ohio 44677, United States',
+    coordinates: [ -81.868895, 40.864025 ],
+    quantity: 5,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Tipp City Schools',
+    address: '90 South Tippecanoe Drive, Tipp City, Ohio 45371, United States',
+    coordinates: [ -84.184186, 39.958489 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Tipp City Schools',
+    address: '90 South Tippecanoe Drive, Tipp City, Ohio 45371, United States',
+    coordinates: [ -84.184186, 39.958489 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Conotton Valley Union Local Schools',
+    address: '7205 Cumberland Road Southwest, Bowerston, Ohio 44695, United States',
+    coordinates: [ -81.21851, 40.46203 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Ashtabula Area City Schools',
+    address: '6610 Sanborn Road, Ashtabula, Ohio 44004, United States',
+    coordinates: [ -80.820364, 41.844778 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Christ The King Elementary',
+    address: '4100 Harvest Lane, Toledo, Ohio 43623, United States',
+    coordinates: [ -83.632299, 41.692775 ],
+    quantity: 4,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Miamisburg City Schools',
+    address: '540 Park Avenue, Miamisburg, Ohio 45342, United States',
+    coordinates: [ -84.282163, 39.639963 ],
+    quantity: 20,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Fairview Park City Schools',
+    address: '21620 Mastick Road, Cleveland, Ohio 44126, United States',
+    coordinates: [ -81.861349, 41.426896 ],
+    quantity: 10,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Struthers City Schools B.O.E.',
+    address: '99 Euclid Avenue, Struthers, Ohio 44471, United States',
+    coordinates: [ -80.598083, 41.053448 ],
+    quantity: 2,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Wanynesfield-Goshen Local Schools',
+    address: '500 North Westminster Street, Waynesfield, Ohio 45896, United States',
+    coordinates: [ -83.972981, 40.605215 ],
+    quantity: 6,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Winton Woods City School Dept of Student Service',
+    address: '8 Enfield Street, Cincinnati, Ohio 45218, United States',
+    coordinates: [ -84.520622, 39.267444 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Bethel Local Schools',
+    address: '7490 Ohio Highway 201, Tipp City, Ohio 45371, United States',
+    coordinates: [ -84.086102, 39.919326 ],
+    quantity: 2,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Northwestern Local School District',
+    address: '5610 Troy Road, Springfield, Ohio 45502, United States',
+    coordinates: [ -83.908896, 39.989881 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Oregon School District',
+    address: '5721 Seaman Road, Oregon, Ohio 43616, United States',
+    coordinates: [ -83.410811, 41.653017 ],
+    quantity: 11,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Wayne County Schools Career Center',
+    address: '518 West Prospect Street, Smithville, Ohio 44677, United States',
+    coordinates: [ -81.868895, 40.864025 ],
+    quantity: 1,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Upper Arlington City School District/ Upper Arlington Fire Division',
+    address: '3861 Reed Road, Columbus, Ohio 43220, United States',
+    coordinates: [ -83.067114, 40.035487 ],
+    quantity: 6,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Graham Local Schools',
+    address: '9915 US Route 36, Saint Paris, Ohio 43072, United States',
+    coordinates: [ -83.94811, 40.126258 ],
+    quantity: 3,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Jackson Local School District',
+    address: '7984 Fulton Road Northwest, Massillon, Ohio 44646, United States',
+    coordinates: [ -81.49806, 40.860938 ],
+    quantity: 3,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Brunswick City School',
+    address: '3531 Center Road, Brunswick, Ohio 44212, United States',
+    coordinates: [ -81.812992, 41.238279 ],
+    quantity: 2,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Perry Local Schools  Board of Education',
+    address: '4201 13th Street Southwest, Canton, Ohio 44646, United States',
+    coordinates: [ -81.454791, 40.788065 ],
+    quantity: 8,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Girard City School District',
+    address: '1244 Shannon Road, Girard, Ohio 44420, United States',
+    coordinates: [ -80.692464, 41.171216 ],
+    quantity: 3,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Beavercreek City Schools',
+    address: '3040 Kemp Road, Beavercreek, Ohio 45431, United States',
+    coordinates: [ -84.045376, 39.755477 ],
+    quantity: 3,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Greenville City Schools',
+    address: '215 West 4th Street, Greenville, Ohio 45331, United States',
+    coordinates: [ -84.633129, 40.098909 ],
+    quantity: 16,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Greenville City Schools',
+    address: '215 West 4th Street, Greenville, Ohio 45331, United States',
+    coordinates: [ -84.633129, 40.098909 ],
+    quantity: 4,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Edison Local School District',
+    address: '14890 Ohio Highway 213, Hammondsville, Ohio 43930, United States',
+    coordinates: [ -80.709432, 40.551721 ],
+    quantity: 2,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Struthers City Schools B.O.E.',
+    address: '99 Euclid Avenue, Struthers, Ohio 44471, United States',
+    coordinates: [ -80.598083, 41.053448 ],
+    quantity: 2,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Field Local Schools',
+    address: '2900 Ohio Highway 43, Mogadore, Ohio 44260, United States',
+    coordinates: [ -81.344853, 41.068198 ],
+    quantity: 2,
+    item: 'LPCR Fully-automatic, WIFI, English-Spanish, Handle'
+    },
+    {
+    name: 'Clark-Shawnee Local Sch Dist',
+    address: '3680 Selma Pike, Springfield, Ohio 45502, United States',
+    coordinates: [ -83.778983, 39.868624 ],
+    quantity: 1,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    },
+    {
+    name: 'Clark-Shawnee Local Sch Dist',
+    address: '3680 Selma Pike, Springfield, Ohio 45502, United States',
+    coordinates: [ -83.778983, 39.868624 ],
+    quantity: 2,
+    item: 'LPCR2 Fully-automatic, WIFI, English-Spanish, Case'
+    }
+
+    ];
+
+    // Loop through the locations and add markers to the map
+    locations.forEach(function(location) {
+    const marker = new mapboxgl.Marker()
+        .setLngLat(location.coordinates)
+        .setPopup(new mapboxgl.Popup().setHTML(`
+            <h3 style="font-size: 18px;">${location.name}</h3>
+            <p style="font-size: 16px;"><strong>Quantity:</strong> ${location.quantity}</p>
+            <p style="font-size: 16px;">${location.item}</p>
+        `)) // Add HTML content for the popup
+        .addTo(map);
+});
+
+
+    // Add zoom controls for user interaction
+    map.addControl(new mapboxgl.NavigationControl());
+
+</script>
+
+</body>
+</html>
