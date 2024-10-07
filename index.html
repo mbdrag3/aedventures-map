@@ -1544,6 +1544,9 @@ body { margin: 0; padding: 0; }
     quantityCountDiv.style.bottom = '10px';
     quantityCountDiv.style.left = '10px';
     quantityCountDiv.style.padding = '10px';
+    quantityCountDiv.style.fontSize = '18px'; // Increase font size
+    quantityCountDiv.style.width = '200px'; // Set a width for the div
+    quantityCountDiv.style.height = 'auto'; // Auto height to adjust with content
     quantityCountDiv.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
     // Set both totals in a single innerHTML assignment
     quantityCountDiv.innerHTML = `<strong>Total Locations: ${totalMarkers}</strong><br><strong>Total AEDs: ${totalQuantity}</strong>`;
