@@ -1533,6 +1533,23 @@ body { margin: 0; padding: 0; }
         .addTo(map);
 });
 
+    // Count the total markers
+    const totalMarkers = locations.length;
+    const totalQuantity = locations.reduce((sum, location) => sum + location.quantity, 0);
+
+    console.log(`Total markers dropped: ${totalMarkers} Total AEDs: ${totalQuantity}`);
+
+    const quantityCountDiv = document.createElement('div');
+    quantityCountDiv.style.position = 'absolute';
+    quantityCountDiv.style.bottom = '10px';
+    quantityCountDiv.style.left = '10px';
+    quantityCountDiv.style.padding = '10px';
+    quantityCountDiv.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+    // Set both totals in a single innerHTML assignment
+    quantityCountDiv.innerHTML = `<strong>Total Locations: ${totalMarkers}</strong><br><strong>Total AEDs: ${totalQuantity}</strong>`;
+    document.body.appendChild(quantityCountDiv);
+
+
 
     // Add zoom controls for user interaction
     map.addControl(new mapboxgl.NavigationControl());
